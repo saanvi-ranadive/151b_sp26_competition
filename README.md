@@ -75,10 +75,9 @@ Do **not** commit large model checkpoints, `.venv/`, HuggingFace cache folders, 
 
 Final run hardware:
 
-- GPU type used: TODO after testing, e.g. `A100 80GB`, `RTX 4090`, `T4`, etc.
-- Number of GPUs used: TODO
-- Approximate total inference/generation time: TODO
-- Approximate runtime for final settings: TODO
+- GPU type used: `T4`
+- Number of GPUs used: 2
+- Approximate total inference/generation time: 8 hours
 
 Example format after testing:
 
