@@ -199,52 +199,109 @@ Calling `run_inference()` performs the full pipeline end-to-end:
 
 ## Command-Line Usage
 
-### Basic final run
+### Final Kaggle submission run
+
+The final `submission.csv` was generated using the required Qwen base model with structured chain-of-thought prompting, one sample per problem, and a 1024-token generation limit:
 
 ```bash
 python run_inference.py \
   --data data/private.jsonl \
-  --output_csv submission.csv
-```
-
-### Self-consistency run
-
-```bash
-python run_inference.py \
-  --data data/private.jsonl \
+  --debug_jsonl results/debug_generations_1024.jsonl \
   --output_csv submission.csv \
-  --num_samples 16 \
-  --inner_batch 4 \
-  --max_tokens 1536
+  --max_tokens 1024
 ```
 
-### LoRA/QLoRA adapter run
+This command writes generation records to `results/debug_generations_1024.jsonl` and rebuilds the final Kaggle submission file as `submission.csv`.
+
+### Resume from checkpoint
+
+`run_inference.py` treats the debug JSONL file as a checkpoint. If `--debug_jsonl` already exists, the script loads completed records from that file, skips examples with completed nonblank predictions, and appends new generations to the same file.
+
+To resume the final run, use the same command without `--overwrite`:
 
 ```bash
 python run_inference.py \
   --data data/private.jsonl \
+  --debug_jsonl results/debug_generations_1024.jsonl \
   --output_csv submission.csv \
-  --adapter your-username/your-model-name
+  --max_tokens 1024
 ```
 
-### Memory-saving 4-bit run
-
-```bash
-python run_inference.py \
-  --data data/private.jsonl \
-  --output_csv submission.csv \
-  --load_in_4bit
-```
+Do not pass `--overwrite` unless you want to delete the existing checkpoint and start from scratch.
 
 ### Local subset testing
+
+For local testing on a subset of examples:
 
 ```bash
 python run_inference.py \
   --data data/public.jsonl \
   --subset_ids data/eval_subset.json \
   --output_csv results/subset_submission.csv \
-  --debug_jsonl results/subset_debug.jsonl
+  --debug_jsonl results/subset_debug.jsonl \
+  --max_tokens 1024
 ```
+
+### Optional self-consistency run
+
+The script also supports self-consistency decoding, although this was not the final submitted configuration:
+
+```bash
+python run_inference.py \
+  --data data/private.jsonl \
+  --output_csv submission_self_consistency.csv \
+  --debug_jsonl results/debug_generations_self_consistency.jsonl \
+  --num_samples 16 \
+  --inner_batch 4 \
+  --max_tokens 1024
+```
+
+### Optional LoRA/QLoRA adapter run
+
+If using a fine-tuned adapter:
+
+```bash
+python run_inference.py \
+  --data data/private.jsonl \
+  --output_csv submission_adapter.csv \
+  --debug_jsonl results/debug_generations_adapter.jsonl \
+  --adapter your-username/your-model-name \
+  --max_tokens 1024
+```
+
+### Optional memory-saving 4-bit run
+
+If GPU memory is limited:
+
+```bash
+python run_inference.py \
+  --data data/private.jsonl \
+  --output_csv submission_4bit.csv \
+  --debug_jsonl results/debug_generations_4bit.jsonl \
+  --load_in_4bit \
+  --max_tokens 1024
+```
+
+---
+
+## Main Configuration Options
+
+| Argument | Meaning | Final value used |
+|---|---|---|
+| `--data` | Input JSONL dataset path | `data/private.jsonl` |
+| `--output_csv` | Kaggle CSV output path | `submission.csv` |
+| `--debug_jsonl` | Debug JSONL checkpoint path | `results/debug_generations_1024.jsonl` |
+| `--adapter` | Optional LoRA/QLoRA adapter path or Hub ID | `None` |
+| `--prompt_strategy` | Prompt template: `structured_cot`, `verification`, or `vanilla` | `structured_cot` |
+| `--num_samples` | Number of samples per question | `1` |
+| `--inner_batch` | Sub-batch size for self-consistency generation | `4` |
+| `--max_tokens` | Maximum new tokens per generation | `1024` |
+| `--load_in_4bit` | Whether to use 4-bit loading | `False` |
+| `--seed` | Random seed | `42` |
+| `--id_column` | ID column name in output CSV | `id` |
+| `--answer_column` | Answer column name in output CSV | `answer` |
+| `--overwrite` | Delete existing checkpoint/output files and start from scratch | `False` |
+| `--allow_model_id_override` | Bypass required model guardrail | `False` |
 ---
 ## Checkpointing and Resume Behavior
 
