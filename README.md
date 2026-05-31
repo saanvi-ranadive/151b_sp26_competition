@@ -11,9 +11,7 @@ The code supports prompt engineering, optional LoRA/QLoRA adapters, and optional
 ## Team Members
 
 - Saanvi Ranadive
-- TODO: Add teammate name
-- TODO: Add teammate name
-- TODO: Add teammate name
+- Ritvik Chand
 
 ---
 
@@ -52,7 +50,7 @@ Recommended final repo structure:
 ```text
 .
 ├── README.md
-├── requirements.txt
+├── constraints.txt
 ├── run_inference.py
 ├── common_utils.py
 ├── data/
@@ -67,7 +65,7 @@ Required files:
 - `README.md`: This file.
 - `run_inference.py`: Final reproducible inference entry point.
 - `common_utils.py`: Shared model loading, prompting, extraction, generation, and evaluation helpers.
-- `requirements.txt`: Python dependencies needed to run the pipeline.
+- `constraints.txt`: Python dependencies needed to run the pipeline.
 
 Do **not** commit large model checkpoints, `.venv/`, HuggingFace cache folders, API keys, or private competition data unless course rules explicitly allow it.
 
@@ -105,21 +103,15 @@ conda activate cse151b-kaggle
 Install dependencies:
 
 ```bash
-pip install -r requirements.txt
+pip install -r constraints.txt
 ```
 
-Example `requirements.txt`:
+Example `constraints.txt`:
 
 ```text
-torch
-transformers
-accelerate
-peft
-bitsandbytes
-numpy
-pandas
-tqdm
-huggingface_hub
+torch==2.5.1
+torchvision==0.20.1
+torchaudio==2.5.1
 ```
 
 If using vLLM inside `common_utils.py`, also include:
@@ -187,7 +179,7 @@ run_inference()
 By default, this expects:
 
 ```text
-Input data: data/private.jsonl
+Input data: data/public.jsonl by default, or pass --data data/private.jsonl for the Kaggle private set.
 Output CSV: submission.csv
 Debug output: results/debug_generations.jsonl
 ```
@@ -254,7 +246,21 @@ python run_inference.py \
   --output_csv results/subset_submission.csv \
   --debug_jsonl results/subset_debug.jsonl
 ```
+---
+## Checkpointing and Resume Behavior
 
+`run_inference.py` treats the debug JSONL file as a checkpoint.
+
+By default, if `--debug_jsonl` already exists, the script loads completed records from that file, skips examples with completed nonblank predictions, and appends new generations to the same file.
+
+To resume from a specific checkpoint, pass it as `--debug_jsonl`:
+
+```bash
+python run_inference.py \
+  --data data/private.jsonl \
+  --debug_jsonl results/debug_generations_1024.jsonl \
+  --output_csv submission.csv \
+  --max_tokens 2048
 ---
 
 ## Main Configuration Options
@@ -355,7 +361,7 @@ For reproducibility:
 - [ ] `run_inference.py` exists.
 - [ ] `run_inference()` can be imported and called.
 - [ ] `common_utils.py` is included.
-- [ ] `requirements.txt` is included.
+- [ ] `constraints.txt` is included.
 - [ ] `common_utils.MODEL_ID` is `Qwen/Qwen3-4B-Thinking-2507`.
 - [ ] Final hyperparameters are listed in the README.
 - [ ] GPU type and approximate runtime are listed in the README.
@@ -412,11 +418,9 @@ Replace this with the exact command used to generate the final Kaggle CSV:
 ```bash
 python run_inference.py \
   --data data/private.jsonl \
+  --debug_jsonl results/debug_generations_1024.jsonl \
   --output_csv submission.csv \
-  --prompt_strategy TODO \
-  --num_samples TODO \
-  --inner_batch TODO \
-  --max_tokens TODO
+  --max_tokens 1024
 ```
 
 If using an adapter, include:
