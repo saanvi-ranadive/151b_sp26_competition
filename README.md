@@ -316,27 +316,29 @@ python run_inference.py \
   --data data/private.jsonl \
   --debug_jsonl results/debug_generations_1024.jsonl \
   --output_csv submission.csv \
-  --max_tokens 2048
+  --max_tokens 1024
 ---
 
 ## Main Configuration Options
 
 | Argument | Meaning | Final value used |
 |---|---|---|
-| `--data` | Input JSONL dataset path | TODO |
+| `--data` | Input JSONL dataset path | `data/private.jsonl` |
 | `--output_csv` | Kaggle CSV output path | `submission.csv` |
-| `--debug_jsonl` | Debug JSONL path | `results/debug_generations.jsonl` |
-| `--adapter` | Optional LoRA/QLoRA adapter path or Hub ID | TODO or `None` |
-| `--prompt_strategy` | `structured_cot`, `verification`, or `vanilla` | TODO |
-| `--num_samples` | Number of samples per question | TODO |
-| `--inner_batch` | Sub-batch size for self-consistency generation | TODO |
-| `--max_tokens` | Maximum new tokens per generation | TODO |
-| `--load_in_4bit` | Whether to use 4-bit loading | TODO |
+| `--debug_jsonl` | Debug JSONL checkpoint path | `results/debug_generations_1024.jsonl` |
+| `--adapter` | Optional LoRA/QLoRA adapter path or Hub ID | `None` |
+| `--prompt_strategy` | Prompt template: `structured_cot`, `verification`, or `vanilla` | `structured_cot` |
+| `--num_samples` | Number of samples per question | `1` |
+| `--inner_batch` | Sub-batch size for self-consistency generation | `4` |
+| `--max_tokens` | Maximum new tokens per generation | `1024` |
+| `--load_in_4bit` | Whether to use 4-bit loading | `False` |
 | `--seed` | Random seed | `42` |
+| `--id_column` | ID column name in output CSV | `id` |
+| `--answer_column` | Answer column name in output CSV | `answer` |
+| `--overwrite` | Delete existing checkpoint/output files and start from scratch | `False` |
+| `--allow_model_id_override` | Bypass required model guardrail | `False` |
 
-Before final submission, replace every `TODO` in the rightmost column with the exact settings used for the final Kaggle CSV.
-
----
+The final Kaggle submission used the required competition model `Qwen/Qwen3-4B-Thinking-2507` with structured chain-of-thought prompting and a maximum generation length of 1024 tokens.
 
 ## Output Files
 
