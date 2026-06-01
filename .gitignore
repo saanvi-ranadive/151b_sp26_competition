@@ -3,4 +3,6 @@
 results
 data
 __pycache__
-LICENSE
+LICENSE__pycache__/
+*.pyc
+.ipynb_checkpoints/
