@@ -68,7 +68,7 @@ DEFAULT_DATA_PATH = "data/public.jsonl"
 DEFAULT_OUTPUT_CSV = "submission.csv"
 DEFAULT_DEBUG_JSONL = "results/debug_generations.jsonl"
 DEFAULT_ID_COLUMN = "id"
-DEFAULT_ANSWER_COLUMN = "answer"
+DEFAULT_ANSWER_COLUMN = "response"
 
 
 PROMPT_TEMPLATES: dict[str, dict[str, str]] = {
