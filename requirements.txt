@@ -1,4 +1,6 @@
-torch==2.8.0
+torch==2.5.1
+torchvision==0.20.1
+torchaudio==2.5.1
 transformers
 accelerate
 bitsandbytes
@@ -9,3 +11,8 @@ tqdm
 safetensors
 tokenizers
 huggingface-hub
+vllm
+sympy
+ipykernel
+jupyter
+antlr4-python3-runtime==4.11.1
