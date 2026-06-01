@@ -124,7 +124,7 @@ class InferenceConfig:
     prompt_strategy: str = "structured_cot"
     num_samples: int = 1
     inner_batch: int = 4
-    max_tokens: int = 768
+    max_tokens: int = 1024
     load_in_4bit: bool = False
     seed: int = 42
     id_column: str = DEFAULT_ID_COLUMN
@@ -357,7 +357,7 @@ def run_inference(
     prompt_strategy: str = "structured_cot",
     num_samples: int = 1,
     inner_batch: int = 4,
-    max_tokens: int = 768,
+    max_tokens: int = 1024,
     load_in_4bit: bool = False,
     seed: int = 42,
     id_column: str = DEFAULT_ID_COLUMN,
@@ -554,7 +554,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--prompt_strategy", default="structured_cot", choices=list(PROMPT_TEMPLATES))
     parser.add_argument("--num_samples", type=int, default=1, help="Use >1 for self-consistency voting.")
     parser.add_argument("--inner_batch", type=int, default=4, help="Sub-batch size for self-consistency generation.")
-    parser.add_argument("--max_tokens", type=int, default=768)
+    parser.add_argument("--max_tokens", type=int, default=1024)
     parser.add_argument("--load_in_4bit", action="store_true")
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--id_column", default=DEFAULT_ID_COLUMN)
