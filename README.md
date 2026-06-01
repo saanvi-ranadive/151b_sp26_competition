@@ -50,14 +50,15 @@ Recommended final repo structure:
 ```text
 .
 ├── README.md
+├── requirements.txt
 ├── constraints.txt
 ├── run_inference.py
 ├── common_utils.py
 ├── data/
-│   └── private.jsonl                  # Not committed if competition rules prohibit sharing
+│   └── private.jsonl        
 ├── results/
-│   └── debug_generations.jsonl         # Generated after inference
-└── submission.csv                      # Generated after inference
+│   └── debug_generations.jsonl         # generated after inference
+└── submission.csv                      # generated after inference
 ```
 
 Required files:
@@ -65,9 +66,8 @@ Required files:
 - `README.md`: This file.
 - `run_inference.py`: Final reproducible inference entry point.
 - `common_utils.py`: Shared model loading, prompting, extraction, generation, and evaluation helpers.
-- `constraints.txt`: Python dependencies needed to run the pipeline.
-
-Do **not** commit large model checkpoints, `.venv/`, HuggingFace cache folders, API keys, or private competition data unless course rules explicitly allow it.
+- `requirements.txt`: Python dependencies needed to run the pipeline.
+- `constraints.txt`: Python dependency package versions needed to run the pipeline.
 
 ---
 
@@ -75,7 +75,7 @@ Do **not** commit large model checkpoints, `.venv/`, HuggingFace cache folders, 
 
 Final run hardware:
 
-- GPU type used: `T4`
+- GPU type used: ``
 - Number of GPUs used: 2
 - Approximate total inference/generation time: 8 hours
 
