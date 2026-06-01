@@ -75,18 +75,9 @@ Required files:
 
 Final run hardware:
 
-- GPU type used: ``
-- Number of GPUs used: 2
+- GPU type used: `NVIDIA H200`
+- Number of GPUs used: 1
 - Approximate total inference/generation time: 8 hours
-
-Example format after testing:
-
-```text
-GPU type: NVIDIA A100 80GB
-Number of GPUs: 1
-Full private-set inference time: approximately 2.5 hours
-Final configuration: structured_cot, num_samples=16, max_tokens=1536, load_in_4bit=False
-```
 
 ---
 
