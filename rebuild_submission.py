@@ -1,9 +1,8 @@
-import json
 import re
 import csv
 from pathlib import Path
 
-DEBUG_PATH = Path("results/debug_generations_2048.jsonl")
+INPUT_PATH = Path("submission_fixed.csv")
 OUT_PATH = Path("submission_postprocessed.csv")
 
 DEFAULT_LETTERS = list("ABCDEFGH")
@@ -11,28 +10,7 @@ DEFAULT_LETTERS = list("ABCDEFGH")
 def clean_text(x):
     return str(x or "").strip()
 
-def get_valid_letters(item):
-    opts = item.get("options")
-    if isinstance(opts, dict):
-        return [str(k).upper() for k in opts.keys()]
-
-    meta = item.get("metadata", {})
-    opts = meta.get("options") if isinstance(meta, dict) else None
-    if isinstance(opts, dict):
-        return [str(k).upper() for k in opts.keys()]
-
-    return DEFAULT_LETTERS
-
-def get_qid(item):
-    if "id" in item:
-        return item["id"]
-    if "question_id" in item:
-        return item["question_id"]
-    if "qid" in item:
-        return item["qid"]
-    raise ValueError(f"Missing id field in row: {item.keys()}")
-
-def extract_mcq(response, old_pred, valid_letters):
+def extract_mcq(response, old_pred, valid_letters=DEFAULT_LETTERS):
     text = clean_text(response)[-1500:]
     valid_letters = [v.upper() for v in valid_letters]
     valid = "".join(valid_letters)
@@ -55,40 +33,36 @@ def extract_mcq(response, old_pred, valid_letters):
     if matches:
         return matches[-1].upper()
 
-    standalone = re.findall(rf"\b([{valid}])\b", text[-600:], flags=re.IGNORECASE)
-    if standalone:
-        return standalone[-1].upper()
-
     old_pred = clean_text(old_pred).upper()
     if old_pred in valid_letters:
         return old_pred
 
-    return valid_letters[0]
+    # If it is not clearly an MCQ answer, keep original response.
+    return clean_text(response)
 
 def rebuild():
     rows = []
 
-    with open(DEBUG_PATH, "r") as f:
-        for line in f:
-            item = json.loads(line)
+    with open(INPUT_PATH, "r", newline="") as f:
+        reader = csv.DictReader(f)
+        fieldnames = reader.fieldnames or []
 
-            qid = get_qid(item)
-            old_pred = item.get("prediction", "")
+        if "id" not in fieldnames:
+            raise ValueError(f"CSV must contain an 'id' column. Found: {fieldnames}")
 
-            if item.get("is_mcq"):
-                pred = extract_mcq(
-                    item.get("response", ""),
-                    old_pred,
-                    get_valid_letters(item)
-                )
-            else:
-                # safest: do not alter FRQ predictions
-                pred = old_pred
+        if "response" not in fieldnames:
+            raise ValueError(f"CSV must contain a 'response' column. Found: {fieldnames}")
 
-            rows.append({"id": qid, "prediction": pred})
+        for row in reader:
+            qid = row["id"]
+            old_response = row["response"]
+
+            pred = extract_mcq(old_response, old_response)
+
+            rows.append({"id": qid, "response": pred})
 
     with open(OUT_PATH, "w", newline="") as f:
-        writer = csv.DictWriter(f, fieldnames=["id", "prediction"])
+        writer = csv.DictWriter(f, fieldnames=["id", "response"])
         writer.writeheader()
         writer.writerows(rows)
 
