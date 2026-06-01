@@ -1,0 +1,11 @@
+torch==2.8.0
+transformers
+accelerate
+bitsandbytes
+sentencepiece
+pandas
+numpy
+tqdm
+safetensors
+tokenizers
+huggingface-hub
