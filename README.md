@@ -104,13 +104,43 @@ Then install the rest:
 
 ### Base model
 
-The pipeline is designed to use:
+The final submission uses the competition-required base model:
 
 ```text
 Qwen/Qwen3-4B-Thinking-2507
 ```
 
-No additional model files are required beyond access to the base model through HuggingFace.
+No fine-tuned LoRA/QLoRA adapter was used for the final submission.
+The model weights are downloaded automatically from Hugging Face when run_inference() is executed for the first time.
+
+### Downloading the Model
+
+Log in to Hugging Face if required:
+huggingface-cli login
+Then run:
+
+```
+from run_inference import run_inference
+
+run_inference()
+```
+
+or
+
+```
+python run_inference.py \
+  --data data/private.jsonl \
+  --output_csv submission.csv \
+  --debug_jsonl results/debug_generations_1024.jsonl \
+  --max_tokens 1024
+```
+
+### Local Model Cache Location
+
+By default, Hugging Face stores downloaded model weights in:
+~/.cache/huggingface/hub/
+No manual placement of model files is required.
+If the model has already been downloaded, the pipeline will automatically reuse the cached weights.
 
 ---
 
